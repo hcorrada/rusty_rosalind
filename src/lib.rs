@@ -36,9 +36,19 @@ pub fn reverse(dna: &str) -> String {
 /// ```
 /// use revcomp::complement;
 ///
-/// let dna = "AGCTTA"
+/// let dna = "AGCTTA";
 /// let res = complement(dna);
 /// assert_eq!(res, "TCGAAT");
+/// ```
 pub fn complement(dna: &str) -> String {
-    return "TCGAAT".to_string();
+    let res = dna.chars().map(|c| {
+        match c {
+            'A' => 'T',
+            'C' => 'G',
+            'G' => 'C',
+            'T' => 'A',
+             _  => 'N',
+        }
+    }).collect();
+    return res;
 }

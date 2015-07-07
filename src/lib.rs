@@ -1,3 +1,7 @@
+use std::fs::File;
+use std::io::BufReader;
+use std::io::BufRead;
+
 /// read problem input
 ///
 /// # Examples
@@ -10,5 +14,13 @@
 /// assert_eq!(k, 4);
 /// ```
 pub fn read_input(filename: &str) -> (String, i32) {
-    return ("ACGTTGCATGTCGCATGATGCATGAGAGCT".to_string(), 4);
+    let fhandle = File::open(filename)
+        .ok()
+        .expect("Could not open file");
+    let reader = BufReader::new(fhandle);
+    let mut lines = reader.lines();
+
+    let dna = lines.next().unwrap().unwrap();
+    let k: i32 = lines.next().unwrap().unwrap().parse().unwrap();
+    return (dna, k);
 }

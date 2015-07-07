@@ -1,5 +1,5 @@
 [package]
-name = "count_nucelotides"
+name = "count_nucleotides"
 version = "0.1.0"
 authors = ["Hector Corrada Bravo <hcorrada@gmail.com>"]
 

@@ -1,3 +1,6 @@
+use std::fs::File;
+use std::io::Read;
+
 /// Compute reverse complement
 ///
 /// # Examples
@@ -52,4 +55,28 @@ pub fn complement(dna: &str) -> String {
         }
     }).collect();
     return res;
+}
+
+/// read string from file
+///
+/// # Examples
+///
+///```
+/// use revcomp::read_input;
+///
+/// let filename = "test.txt";
+/// let res = read_input(filename);
+/// assert_eq!(res, "AAAACCCGGT");
+///```
+pub fn read_input(filename: &str) -> String {
+    let mut fhandle = File::open(filename)
+        .ok()
+        .expect("Could not open file");
+
+    let mut string = String::new();
+    fhandle.read_to_string(&mut string)
+        .ok()
+        .expect("Could not read file");
+    let string = string.trim().to_string();
+    return string;
 }

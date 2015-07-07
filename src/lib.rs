@@ -10,7 +10,8 @@
 /// assert_eq!(res, "ACCGGGTTTT");
 /// ```
 pub fn revcomp(dna: &str) -> String {
-    return "ACCGGGTTTT".to_string();
+    let revdna = reverse(&dna);
+    return complement(&revdna);
 }
 
 /// reverse a String

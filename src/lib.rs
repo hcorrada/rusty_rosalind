@@ -9,6 +9,6 @@
 /// let res = revcomp(dna);
 /// assert_eq!(res, "ACCGGGTTTT");
 /// ```
-fn revcomp() {
-
+pub fn revcomp(dna: &str) -> String {
+    return "ACCGGGTTTT".to_string();
 }

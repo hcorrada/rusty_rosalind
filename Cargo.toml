@@ -1,0 +1,4 @@
+[package]
+name = "frequent_words"
+version = "0.1.0"
+authors = ["Hector Corrada Bravo <hcorrada@gmail.com>"]

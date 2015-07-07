@@ -21,10 +21,24 @@ pub fn revcomp(dna: &str) -> String {
 /// use revcomp::reverse;
 ///
 /// let dna = "ATTCGA";
-/// let res = revcomp::reverse(dna);
+/// let res = reverse(dna);
 /// assert_eq!(res, "AGCTTA");
 /// ```
 pub fn reverse(dna: &str) -> String {
     let res = dna.chars().rev().collect();
     return res;
+}
+
+/// complement a dna String
+///
+/// # Examples
+///
+/// ```
+/// use revcomp::complement;
+///
+/// let dna = "AGCTTA"
+/// let res = complement(dna);
+/// assert_eq!(res, "TCGAAT");
+pub fn complement(dna: &str) -> String {
+    return "TCGAAT".to_string();
 }

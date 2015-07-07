@@ -1,8 +1,13 @@
 extern crate gc_content;
 
-use gc_content::parse_fasta_file;
+use std::env;
+use gc_content::runit;
 
 fn main() {
-    let res = parse_fasta_file("test.txt");
-    println!("{:?}", res);
+    let filename = env::args().nth(1)
+        .expect("Need one argument");
+
+    let (id, gc) = runit(&filename);
+    println!("{}", id);
+    println!("{}", gc);
 }

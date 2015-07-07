@@ -80,3 +80,20 @@ pub fn read_input(filename: &str) -> String {
     let string = string.trim().to_string();
     return string;
 }
+
+/// revcomp string read from file
+///
+/// # Examples
+///
+/// ```
+/// use revcomp::runit;
+///
+/// let filename = "test.txt";
+/// let res = runit(filename);
+/// assert_eq!(res, "ACCGGGTTTT")
+/// ```
+pub fn runit(filename: &str) -> String {
+    let string = read_input(filename);
+    let res = revcomp(&string);
+    return res;
+}

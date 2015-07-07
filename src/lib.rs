@@ -63,3 +63,28 @@ pub fn parse_fasta_file(filename: &str) -> HashMap<String, String> {
     records.insert(id, dna);
     return records;
 }
+
+/// run counter on fasta file return record with highest gc content
+///
+/// # Examples
+///
+/// ```
+/// use gc_content::runit;
+///
+/// let res = runit("test.txt");
+/// assert_eq!(res, ("Rosalind_0808".to_string(), 60.919540));
+/// ```
+pub fn runit(filename: &str) -> (String, f32) {
+    let records = parse_fasta_file(filename);
+    let mut maxgc = -1.0 as f32;
+    let mut maxid = "";
+
+    for (id, dna) in &records {
+        let curgc = gc_content(dna);
+        if curgc > maxgc {
+            maxgc = curgc;
+            maxid = id;
+        }
+    }
+    return (maxid.to_string(), maxgc);
+}

@@ -12,3 +12,19 @@
 pub fn revcomp(dna: &str) -> String {
     return "ACCGGGTTTT".to_string();
 }
+
+/// reverse a String
+///
+/// # Examples
+///
+/// ```
+/// use revcomp::reverse;
+///
+/// let dna = "ATTCGA";
+/// let res = revcomp::reverse(dna);
+/// assert_eq!(res, "AGCTTA");
+/// ```
+pub fn reverse(dna: &str) -> String {
+    let res = dna.chars().rev().collect();
+    return res;
+}

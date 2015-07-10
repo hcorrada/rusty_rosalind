@@ -22,7 +22,7 @@ pub fn gc_content(dna: &str) -> f32 {
             _ => unreachable!(),
         }
     }
-    return 100.0 * count / dna.len() as f32;
+    100.0 * count / dna.len() as f32
 }
 
 /// parse fasta file
@@ -34,6 +34,8 @@ pub fn gc_content(dna: &str) -> f32 {
 ///
 /// let records = parse_fasta_file("test.txt");
 /// assert!(records.contains_key("Rosalind_6404"));
+/// assert!(records.contains_key("Rosalind_5959"));
+/// assert!(records.contains_key("Rosalind_0808"));
 /// assert_eq!(records.get("Rosalind_6404").unwrap(), "CCTGCGGAAGATCGGCACTAGAATAGCCAGAACCGTTTCTCTGAGGCTTCCGGCCTTCCCTCCCACTAATAATTCTGAGG");
 /// ```
 pub fn parse_fasta_file(filename: &str) -> HashMap<String, String> {
@@ -43,25 +45,25 @@ pub fn parse_fasta_file(filename: &str) -> HashMap<String, String> {
     let reader = BufReader::new(fhandle);
     let mut records = HashMap::new();
 
-    let mut curline;
     let mut id = String::new();
     let mut dna = String::new();
 
     for line in reader.lines() {
-        if line.is_err() { continue };
+        if line.is_err() {
+            break;
+        };
 
-        curline = line.unwrap();
+        let curline = line.unwrap();
         if curline.starts_with(">") {
-            records.insert(id, dna);
+            if id.len() > 0 { records.insert(id, dna); };
             id = curline[1..].to_string();
             dna = String::new();
         } else {
             dna.push_str(&curline);
         }
     }
-
-    records.insert(id, dna);
-    return records;
+    if id.len() > 0 { records.insert(id, dna); };
+    records
 }
 
 /// run counter on fasta file return record with highest gc content
@@ -75,16 +77,16 @@ pub fn parse_fasta_file(filename: &str) -> HashMap<String, String> {
 /// assert_eq!(res, ("Rosalind_0808".to_string(), 60.919540));
 /// ```
 pub fn runit(filename: &str) -> (String, f32) {
-    let records = parse_fasta_file(filename);
+    let records = parse_fasta_file(&filename);
     let mut maxgc = -1.0 as f32;
     let mut maxid = "";
 
     for (id, dna) in &records {
-        let curgc = gc_content(dna);
+        let curgc = gc_content(&dna);
         if curgc > maxgc {
             maxgc = curgc;
             maxid = id;
         }
     }
-    return (maxid.to_string(), maxgc);
+    (maxid.to_string(), maxgc)
 }

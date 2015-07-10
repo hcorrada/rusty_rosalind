@@ -14,7 +14,7 @@ use std::io::Read;
 /// ```
 pub fn revcomp(dna: &str) -> String {
     let revdna = reverse(&dna);
-    return complement(&revdna);
+    complement(&revdna)
 }
 
 /// reverse a String
@@ -29,8 +29,7 @@ pub fn revcomp(dna: &str) -> String {
 /// assert_eq!(res, "AGCTTA");
 /// ```
 pub fn reverse(dna: &str) -> String {
-    let res = dna.chars().rev().collect();
-    return res;
+    dna.chars().rev().collect()
 }
 
 /// complement a dna String
@@ -45,7 +44,9 @@ pub fn reverse(dna: &str) -> String {
 /// assert_eq!(res, "TCGAAT");
 /// ```
 pub fn complement(dna: &str) -> String {
-    let res = dna.chars().map(|c| {
+    // map returns an iterator, collect
+    // collects iterator characters into string
+    dna.chars().map(|c| {
         match c {
             'A' => 'T',
             'C' => 'G',
@@ -53,8 +54,7 @@ pub fn complement(dna: &str) -> String {
             'T' => 'A',
              _  => 'N',
         }
-    }).collect();
-    return res;
+    }).collect()
 }
 
 /// read string from file
@@ -77,8 +77,7 @@ pub fn read_input(filename: &str) -> String {
     fhandle.read_to_string(&mut string)
         .ok()
         .expect("Could not read file");
-    let string = string.trim().to_string();
-    return string;
+    string.trim().to_string()
 }
 
 /// revcomp string read from file
@@ -94,6 +93,5 @@ pub fn read_input(filename: &str) -> String {
 /// ```
 pub fn runit(filename: &str) -> String {
     let string = read_input(filename);
-    let res = revcomp(&string);
-    return res;
+    revcomp(&string)
 }

@@ -12,8 +12,7 @@ use std::io::Read;
 /// assert_eq!(res, "GAUGGAACUUGACUACGUAAAUU")
 /// ```
 pub fn transcribe(dna: &str) -> String {
-    let rna = dna.replace("T", "U");
-    return rna;
+    dna.replace("T", "U")
 }
 
 /// Read problem input from file
@@ -38,6 +37,5 @@ pub fn read_input(filename: &str) -> String {
         .ok()
         .expect("Unable to read");
 
-    let dna = dna.trim().to_string();
-    return dna;
+    dna.trim().to_string()
 }

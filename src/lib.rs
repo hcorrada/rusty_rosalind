@@ -14,8 +14,15 @@ use std::io::BufRead;
 /// let res = match_pattern(pattern, genome);
 /// assert_eq!(res, vec![1, 3, 9]);
 /// ```
-pub fn match_pattern(pattern: &str, genome: &str) -> Vec<i32> {
-    vec![1, 3, 9]
+pub fn match_pattern(pattern: &str, genome: &str) -> Vec<usize> {
+    let k = pattern.len();
+    let n = genome.len();
+    let mut res = Vec::new();
+
+    for i in 0..n-k {
+        if pattern == &genome[i..i+k] { res.push(i); }
+    }
+    res
 }
 
 /// read input from file

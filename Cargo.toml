@@ -5,3 +5,4 @@ authors = ["Hector Corrada Bravo <hcorrada@gmail.com>"]
 
 [dependencies]
 scan_fmt = "0.1.0"
+itertools = "0.3.0"

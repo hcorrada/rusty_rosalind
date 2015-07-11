@@ -11,7 +11,7 @@ fn main() {
 
     let (dna, k) = read_input(&filename);
     let kmer_counts = count_kmers(&dna, k);
-    let frequent_kmers: Vec<String> = find_frequent_kmers(kmer_counts);
+    let frequent_kmers: Vec<String> = find_frequent_kmers(&kmer_counts);
     let res = frequent_kmers.iter().join(" ");
     println!("{}", res);
 }

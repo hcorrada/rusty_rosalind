@@ -16,22 +16,22 @@ use std::collections::HashMap;
 /// kmer_counts.insert("AC".to_string(), 2);
 /// kmer_counts.insert("AD".to_string(), 4);
 /// kmer_counts.insert("AE".to_string(), 1);
-/// let frequent_kmers = find_frequent_kmers(kmer_counts);
+/// let frequent_kmers = find_frequent_kmers(&kmer_counts);
 /// assert_eq!(frequent_kmers, ["AB", "AD"]);
 /// ```
-pub fn find_frequent_kmers(kmer_counts: HashMap<String, i32>) ->  Vec<String> {
+pub fn find_frequent_kmers(kmer_counts: &HashMap<String, i32>) ->  Vec<String> {
     let mut res: Vec<String> = Vec::new();
     let mut highest_count: i32 = 0;
-    for (kmer, count) in &kmer_counts {
+    for (kmer, count) in kmer_counts {
         if *count > highest_count {
             highest_count = count.clone();
-            res = Vec::new();
+            res.clear();
             res.push(kmer.to_string());
         } else if *count == highest_count {
             res.push(kmer.to_string());
         }
     }
-    return res;
+    res
 }
 
 /// count kmers
@@ -55,7 +55,7 @@ pub fn count_kmers(dna: &str, k: usize) -> HashMap<String, i32> {
         *counter += 1;
     }
 
-    return kmer_counts;
+    kmer_counts
 }
 
 /// read problem input
@@ -74,9 +74,8 @@ pub fn read_input(filename: &str) -> (String, usize) {
         .ok()
         .expect("Could not open file");
     let reader = BufReader::new(fhandle);
-    let mut lines = reader.lines();
-
-    let dna = lines.next().unwrap().unwrap();
-    let k: usize = lines.next().unwrap().unwrap().parse().unwrap();
-    return (dna, k);
+    let lines: Vec<String> = reader.lines().map(|x| x.unwrap()).collect();
+    let dna: String = lines[0].clone();
+    let k: usize = lines[1].parse().unwrap();
+    (dna, k)
 }

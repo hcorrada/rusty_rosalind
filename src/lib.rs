@@ -3,6 +3,31 @@
 use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
+use std::collections::HashMap;
+
+/// locate kmers
+///
+/// # Examples
+///
+/// ```
+/// use clump_finding::locate_kmers;
+///
+/// let genome = "CGACACGACATTGCGACATA";
+/// let res = locate_kmers(genome, 5);
+/// assert!(res.contains_key("CGACA"));
+/// let locations = res.get("CGACA").unwrap();
+/// assert_eq!(*locations, vec![0, 5, 13]);
+pub fn locate_kmers(genome: &str, k: usize) -> HashMap<String, Vec<usize>> {
+    let mut kmer_locations = HashMap::new();
+    let n = genome.len();
+
+    for location in 0..n-k+1 {
+        let kmer = &genome[location..location+k];
+        let locations = kmer_locations.entry(kmer.to_string()).or_insert(Vec::new());
+        locations.push(location);
+    }
+    kmer_locations
+}
 
 /// read input
 ///

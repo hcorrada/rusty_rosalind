@@ -5,6 +5,50 @@ use std::io::BufReader;
 use std::io::BufRead;
 use std::collections::HashMap;
 
+/// find clumps
+///
+/// # Examples
+///
+/// ```
+/// use clump_finding::find_clumps;
+/// use std::collections::HashMap;
+///
+/// let mut kmer_locations = HashMap::new();
+/// kmer_locations.insert("A".to_string(), vec![1,3,5,7]);
+/// kmer_locations.insert("B".to_string(), vec![1,2,3,4]);
+/// kmer_locations.insert("C".to_string(), vec![1,10,20,30]);
+/// let res = find_clumps(kmer_locations, 3, 3, 1);
+/// assert_eq!(res, vec!["B".to_string()]);
+/// ```
+///
+/// ```
+/// use clump_finding::find_clumps;
+/// use clump_finding::locate_kmers;
+///
+/// let genome = "CGGACTCGACAGATGTGAAGAAATGTGAAGACTGAGTGAAGAGAAGAGGAAACACGACACGACATTGCGACATAATGTACGAATGTAATGTGCCTATGGC";
+/// let (k, l, t) = (5, 75, 4);
+/// let kmer_locations = locate_kmers(genome, k);
+/// let mut clumps = find_clumps(kmer_locations, l, t, k);
+/// let mut expected = vec!["CGACA", "GAAGA", "AATGT"];
+/// assert_eq!(clumps.sort(), expected.sort());
+/// ```
+pub fn find_clumps(kmer_locations: HashMap<String, Vec<usize>>,
+        l: usize, t: usize, k:usize) -> Vec<String> {
+    let mut clumps = Vec::new();
+
+    for (kmer, locations) in &kmer_locations {
+        let n = locations.len();
+        if n < t { continue; };
+        for i in 0..n-t+1 {
+            if locations[i] + l - k >= locations[i+t-1] {
+                clumps.push(kmer.to_string());
+                break;
+            }
+        }
+    }
+    clumps
+}
+
 /// locate kmers
 ///
 /// # Examples
@@ -17,6 +61,7 @@ use std::collections::HashMap;
 /// assert!(res.contains_key("CGACA"));
 /// let locations = res.get("CGACA").unwrap();
 /// assert_eq!(*locations, vec![0, 5, 13]);
+/// ```
 pub fn locate_kmers(genome: &str, k: usize) -> HashMap<String, Vec<usize>> {
     let mut kmer_locations = HashMap::new();
     let n = genome.len();

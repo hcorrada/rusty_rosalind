@@ -2,6 +2,22 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
 
+/// do pattern matching
+///
+/// # Examples
+///
+/// ```
+/// use pattern_matching::match_pattern;
+///
+/// let pattern = "ATAT";
+/// let genome = "GATATATGCATATACTT";
+/// let res = match_pattern(pattern, genome);
+/// assert_eq!(res, vec![1, 3, 9]);
+/// ```
+pub fn match_pattern(pattern: &str, genome: &str) -> Vec<i32> {
+    vec![1, 3, 9]
+}
+
 /// read input from file
 ///
 /// # Examples

@@ -1,0 +1,4 @@
+[package]
+name = "approximate_matching"
+version = "0.1.0"
+authors = ["Hector Corrada Bravo <hcorrada@gmail.com>"]

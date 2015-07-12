@@ -2,6 +2,22 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
 
+mod neighborhood;
+
+use neighborhood::Combinations;
+
+/// generate combinations
+pub trait Combinator : Iterator {
+    fn combinations(self) -> Combinations<Self>
+        where Self: Sized + Clone, Self::Item: Clone {
+
+        Combinations::new(self)
+    }
+}
+
+impl<T: ?Sized> Combinator for T where T: Iterator { }
+
+
 /// read input
 ///
 /// # Examples

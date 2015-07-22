@@ -1,43 +1,56 @@
-pub struct Combinations<I: Iterator> {
-    iter: I,
-    next_iter: I,
-    val: Option<I::Item>,
+pub struct Combinations {
+    n:    usize,
+    d:    usize,
+    vals: Vec<usize>,
 }
 
-impl<I> Combinations<I> where I: Iterator + Clone {
-    pub fn new(iter: I) -> Combinations<I> {
+impl Combinations {
+    pub fn new(n: usize, d: usize) -> Combinations {
+        if d >= n {
+            panic!("Can't create these combinations");
+        }
+
         Combinations {
-            next_iter: iter.clone(),
-            iter: iter,
-            val: None,
+            n: n,
+            d: d,
+            vals: Vec::new(),
         }
     }
 }
 
-impl<I> Iterator for Combinations<I>
-    where I: Iterator + Clone,
-          I::Item: Clone {
+impl Iterator for Combinations {
+    type Item = Vec<usize>;
 
-    type Item = (I::Item, I::Item);
     fn next(&mut self) -> Option<Self::Item> {
-        if self.val.is_none() {
-            self.val = self.iter.next();
-            self.next_iter = self.iter.clone();
-        }
-
-        let elt = match self.val {
-            Some(ref x) => x.clone(),
-            None => return None,
-        };
-
-        match self.next_iter.next() {
-            Some(ref x) => {
-                return Some((elt, x.clone()));
-            },
-            None => {
-                self.val = None;
+        // if value vector is empty, initialize
+        if self.vals.len() == 0 {
+            for i in 0..self.d {
+                self.vals.push(i);
             }
         }
-        self.next()
+
+        // check if we can advance index from last to first position
+        let mut cur_position = self.d - 1;
+        while cur_position >= 0 {
+            if self.vals[cur_position] + (self.d - cur_position) < self. n {
+                // advance index in this column and break loop
+                self.vals[cur_position] += 1;
+                break;
+            }
+
+            // if this is the first position, there are no more combinations
+            if cur_position == 0 { return None };
+            cur_position -= 1;
+        }
+
+        // we advanced some position, go from this position to the last to
+        // update the combination accordingly
+        cur_position += 1;
+        while cur_position < self.d {
+            self.vals[cur_position] = self.vals[cur_position - 1] + 1;
+            cur_position += 1;
+        }
+        // return resulting vector
+        Some(self.vals.clone())
     }
 }

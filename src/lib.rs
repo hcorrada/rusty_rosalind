@@ -7,16 +7,17 @@ mod neighborhood;
 use neighborhood::Combinations;
 
 /// generate combinations
-pub trait Combinator : Iterator {
-    fn combinations(self) -> Combinations<Self>
-        where Self: Sized + Clone, Self::Item: Clone {
-
-        Combinations::new(self)
-    }
+///
+/// # Examples
+///
+/// ```
+/// use approximate::matching::combinations;
+///
+/// let combs: Vec<_> = combinations(3, 2).collect();
+/// assert_eq!(combs, vec![[0,1], [0,2], [1,2]]);
+pub fn combinations(n: usize, d: usize) -> Combinations {
+    Combinations::new(n,d)
 }
-
-impl<T: ?Sized> Combinator for T where T: Iterator { }
-
 
 /// read input
 ///

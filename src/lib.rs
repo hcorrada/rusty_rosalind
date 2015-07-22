@@ -5,6 +5,7 @@ use std::io::BufRead;
 mod neighborhood;
 
 use neighborhood::Combinations;
+use neighborhood::Product;
 
 /// generate combinations
 ///
@@ -17,6 +18,19 @@ use neighborhood::Combinations;
 /// assert_eq!(combs, vec![[0,1], [0,2], [1,2]]);
 pub fn combinations(n: usize, d: usize) -> Combinations {
     Combinations::new(n,d)
+}
+
+/// generate cartesian Product
+///
+/// # Examples
+///
+/// ```
+/// use approximate_matching::product;
+///
+/// let prod: Vec<_> = product(3,2).collect();
+/// assert_eq!(prod, vec![[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]]);
+pub fn product(n: usize, d: usize) -> Product {
+    Product::new(n, d)
 }
 
 /// read input

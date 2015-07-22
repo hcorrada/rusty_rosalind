@@ -1,3 +1,48 @@
+pub struct Product {
+    n: usize,
+    d: usize,
+    vals: Vec<usize>,
+}
+
+impl Product {
+    pub fn new(n: usize, d: usize) -> Product {
+        Product {
+            n: n,
+            d: d,
+            vals: Vec::new(),
+        }
+    }
+}
+
+impl Iterator for Product {
+    type Item = Vec<usize>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.vals.len() == 0 {
+            for _ in 0..self.d {
+                self.vals.push(0);
+            }
+            return Some(self.vals.clone());
+        }
+
+        let mut cur_position = self.d - 1;
+        while cur_position >= 0 {
+            if self.vals[cur_position] < self.n - 1 {
+                self.vals[cur_position] += 1;
+                break;
+            }
+            if cur_position == 0 { return None };
+            cur_position -= 1;
+        }
+        cur_position += 1;
+        while cur_position < self.d {
+            self.vals[cur_position] = 0;
+            cur_position += 1;
+        }
+        Some(self.vals.clone())
+    }
+}
+
 pub struct Combinations {
     n:    usize,
     d:    usize,

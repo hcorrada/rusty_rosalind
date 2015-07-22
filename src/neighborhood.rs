@@ -27,6 +27,7 @@ impl Iterator for Combinations {
             for i in 0..self.d {
                 self.vals.push(i);
             }
+            return Some(self.vals.clone());
         }
 
         // check if we can advance index from last to first position

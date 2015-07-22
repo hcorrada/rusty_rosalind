@@ -11,7 +11,7 @@ use neighborhood::Combinations;
 /// # Examples
 ///
 /// ```
-/// use approximate::matching::combinations;
+/// use approximate_matching::combinations;
 ///
 /// let combs: Vec<_> = combinations(3, 2).collect();
 /// assert_eq!(combs, vec![[0,1], [0,2], [1,2]]);

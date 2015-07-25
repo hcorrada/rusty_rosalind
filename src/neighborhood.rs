@@ -1,3 +1,7 @@
+extern crate itertools;
+use self::itertools::Itertools;
+
+#[derive(Clone)]
 pub struct Product {
     n: usize,
     d: usize,
@@ -98,5 +102,45 @@ impl Iterator for Combinations {
         }
         // return resulting vector
         Some(self.vals.clone())
+    }
+}
+
+pub struct KmerNeighborhood {
+    chars: Vec<char>,
+    index_iterator: itertools::Product<Combinations, Product>,
+}
+
+impl KmerNeighborhood {
+    pub fn new(kmer: &str, d: usize) -> KmerNeighborhood {
+        let chars: Vec<_> = kmer.chars().collect();
+        let n = chars.len();
+        let combinations = Combinations::new(n, d);
+        let product = Product::new(n, d);
+        let index_iterator = combinations.cartesian_product(product);
+
+        KmerNeighborhood {
+            chars: chars.clone(),
+            index_iterator: index_iterator,
+        }
+    }
+
+    pub fn build_string(&self, ivec: &Vec<usize>, jvec: &Vec<usize>) -> String {
+        let mut new_chars = self.chars.clone();
+        for (i,j) in ivec.iter().zip(jvec) {
+            new_chars[*i] = self.chars[*j];
+        }
+        new_chars.iter().join("")
+    }
+}
+
+impl Iterator for KmerNeighborhood {
+    type Item = String;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let indices: Option<(Vec<usize>, Vec<usize>)> = self.index_iterator.next();
+        match indices {
+            None => None,
+            Some((ivec, jvec)) => Some(self.build_string(&ivec, &jvec)),
+        }
     }
 }

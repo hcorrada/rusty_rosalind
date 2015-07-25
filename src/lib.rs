@@ -2,10 +2,13 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
 
+use std::collections::HashSet;
+
 mod neighborhood;
 
 use neighborhood::Combinations;
 use neighborhood::Product;
+use neighborhood::KmerNeighborhood;
 
 /// generate combinations
 ///
@@ -31,6 +34,48 @@ pub fn combinations(n: usize, d: usize) -> Combinations {
 /// assert_eq!(prod, vec![[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]]);
 pub fn product(n: usize, d: usize) -> Product {
     Product::new(n, d)
+}
+
+/// generate string neighborhood
+///
+/// # Examples
+///
+/// ```
+/// use approximate_matching::neighborhood;
+/// use approximate_matching::num_mismatches;
+///
+/// let res = neighborhood("ATCGA", 2);
+/// assert!(res.iter().all(|x| num_mismatches("ATCGA", x) <= 2));
+/// assert!(res.contains("ATCGA"));
+/// assert!(res.contains("TTCGA"));
+/// assert!(res.contains("ATTGA"));
+/// assert!(!res.contains("AAAAA"));
+/// assert!(!res.contains("ATCG"));
+pub fn neighborhood(kmer: &str, d: usize) -> HashSet<String> {
+    let kmer_neighborhood = KmerNeighborhood::new(kmer, d);
+    let mut res = HashSet::new();
+    for kmer in kmer_neighborhood {
+        res.insert(kmer);
+    }
+    res
+}
+
+/// edit distance between strings
+///
+/// # Examples
+///
+/// ```
+/// use approximate_matching::num_mismatches;
+///
+/// assert_eq!(num_mismatches("AAA","AAA"),0);
+/// assert_eq!(num_mismatches("AAA","ACA"),1);
+/// assert_eq!(num_mismatches("TAT","AAA"),2);
+pub fn num_mismatches(left: &str, right: &str) -> usize {
+    let left_chars = left.chars();
+    let right_chars = right.chars();
+    left_chars.zip(right_chars)
+        .filter(|&(x,y)| x != y)
+        .count()
 }
 
 /// read input

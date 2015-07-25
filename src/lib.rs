@@ -78,6 +78,29 @@ pub fn num_mismatches(left: &str, right: &str) -> usize {
         .count()
 }
 
+/// find approximate matches
+///
+/// use approximate_matching::find_matches;
+///
+/// let pattern = "ATTCTGGA";
+/// let text = "CGCCCGAATCCAGAACGCATTCCCATATTTCGGGACCACTGGCCTCCACGGTACGGACGTCAATCAAATGCCTAGCGGCTTGTGGTTTCTCCTACGCTCC";
+/// let result = find_matches(pattern, text, 3);
+/// assert_eq!(result, vec![6, 7, 26, 27, 78]);
+pub fn find_matches(pattern: &str, text: &str, d: usize) -> Vec<usize> {
+    let neighborhood = neighborhood(pattern, d);
+    let k = pattern.len();
+    let n = text.len();
+    let mut result = Vec::new();
+
+    for i in 0..n-k {
+        let kmer = &text[i..i+k];
+        if neighborhood.contains(kmer) {
+            result.push(i);
+        }
+    }
+    result
+}
+
 /// read input
 ///
 /// # Examples

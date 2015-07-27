@@ -165,3 +165,59 @@ pub fn find_matches(pattern: &str, text: &str, d: usize) -> Vec<usize> {
     }
     result
 }
+
+/// reverse a String
+///
+/// # Examples
+///
+/// ```
+/// use rosalind_lib::reverse;
+///
+/// let dna = "ATTCGA";
+/// let res = reverse(dna);
+/// assert_eq!(res, "AGCTTA");
+/// ```
+pub fn reverse(dna: &str) -> String {
+    dna.chars().rev().collect()
+}
+
+/// complement a dna String
+///
+/// # Examples
+///
+/// ```
+/// use rosalind_lib::complement;
+///
+/// let dna = "AGCTTA";
+/// let res = complement(dna);
+/// assert_eq!(res, "TCGAAT");
+/// ```
+pub fn complement(dna: &str) -> String {
+    // map returns an iterator, collect
+    // collects iterator characters into string
+    dna.chars().map(|c| {
+        match c {
+            'A' => 'T',
+            'C' => 'G',
+            'G' => 'C',
+            'T' => 'A',
+             _  => 'N',
+        }
+    }).collect()
+}
+
+/// Compute reverse complement
+///
+/// # Examples
+///
+/// ```
+/// use rosalind_lib::revcomp;
+///
+/// let dna = "AAAACCCGGT";
+/// let res = revcomp(dna);
+/// assert_eq!(res, "ACCGGGTTTT");
+/// ```
+pub fn revcomp(dna: &str) -> String {
+    let revdna = reverse(&dna);
+    complement(&revdna)
+}

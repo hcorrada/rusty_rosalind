@@ -103,6 +103,39 @@ pub fn count_mismatch_kmers(text: &str, k: usize, d:usize) -> HashMap<Vec<u8>, i
     kmer_counts
 }
 
+/// get frequent kmers
+///
+/// # Examples
+///
+/// ```
+/// use frequent_words_mismatch::find_frequent_kmers;
+/// use std::collections::HashMap;
+///
+/// let mut kmer_counts = HashMap::new();
+/// kmer_counts.insert(b"AB".to_vec(), 4);
+/// kmer_counts.insert(b"AC".to_vec(), 2);
+/// kmer_counts.insert(b"AD".to_vec(), 4);
+/// kmer_counts.insert(b"AE".to_vec(), 1);
+/// let frequent_kmers = find_frequent_kmers(&kmer_counts);
+/// assert_eq!(frequent_kmers, ["AB", "AD"]);
+/// ```
+pub fn find_frequent_kmers(kmer_counts: &HashMap<Vec<u8>, i32>) ->  Vec<String> {
+    let mut res: Vec<String> = Vec::new();
+    let mut highest_count: i32 = 0;
+    for (kmer, count) in kmer_counts {
+        if *count > highest_count {
+            highest_count = count.clone();
+            res.clear();
+            let s = String::from_utf8(kmer.clone()).unwrap();
+            res.push(s);
+        } else if *count == highest_count {
+            let s = String::from_utf8(kmer.clone()).unwrap();
+            res.push(s);
+        }
+    }
+    res
+}
+
 /// find approximate matches
 ///
 /// use frequent_words_mismatch::find_matches;

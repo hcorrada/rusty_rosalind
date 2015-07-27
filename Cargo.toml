@@ -1,0 +1,7 @@
+[package]
+name = "frequent_words_mismatch_revcomp"
+version = "0.1.0"
+authors = ["Hector Corrada Bravo <hcorrada@gmail.com>"]
+
+[dependencies.rosalind_lib]
+path = "../rosalind_lib"

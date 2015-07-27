@@ -107,6 +107,8 @@ impl Iterator for Combinations {
 
 pub struct KmerNeighborhood<'a> {
     chars: &'a [u8],
+    n: usize,
+    buffer: Vec<u8>,
     index_iterator: itertools::Product<Combinations, Product>,
 }
 
@@ -114,29 +116,32 @@ impl<'a> KmerNeighborhood<'a> {
     pub fn new(kmer: &str, d: usize) -> KmerNeighborhood {
         let chars = kmer.as_bytes();
         let n = chars.len();
+        let mut buffer = Vec::with_capacity(n);
+        for i in 0..n { buffer.push(chars[i]); }
         let combinations = Combinations::new(n, d);
         let product = Product::new(n, d);
         let index_iterator = combinations.cartesian_product(product);
 
         KmerNeighborhood {
             chars: chars,
+            n: n,
+            buffer: buffer,
             index_iterator: index_iterator,
         }
     }
 
-    pub fn build_string(&self, ivec: &Vec<usize>, jvec: &Vec<usize>) -> String {
-        let mut new_chars = Vec::with_capacity(self.chars.len());
-        for i in 0..self.chars.len() { new_chars.push(self.chars[i].clone()) };
+    pub fn build_string(&mut self, ivec: &Vec<usize>, jvec: &Vec<usize>) -> Vec<u8> {
+        for i in 0..self.n { self.buffer[i] = self.chars[i] };
 
         for (i,j) in ivec.iter().zip(jvec) {
-            new_chars[*i] = self.chars[*j];
+            self.buffer[*i] = self.chars[*j];
         }
-        String::from_utf8(new_chars).unwrap()
+        self.buffer.clone()
     }
 }
 
 impl<'a> Iterator for KmerNeighborhood<'a> {
-    type Item = String;
+    type Item = Vec<u8>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let indices: Option<(Vec<usize>, Vec<usize>)> = self.index_iterator.next();

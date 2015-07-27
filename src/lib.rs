@@ -52,12 +52,19 @@ pub fn product(n: usize, d: usize) -> Product {
 /// assert!(res.contains(&b"ATTGA"[..]));
 /// assert!(!res.contains(&b"AAAAA"[..]));
 /// assert!(!res.contains(&b"ATCG"[..]));
+/// ```
+///
+/// ```
+/// use frequent_words_mismatch::neighborhood;
+/// assert!(neighborhood("GTTG", 1).contains(&b"GATG"[..]));
+/// ```
 pub fn neighborhood(kmer: &str, d: usize) -> HashSet<Vec<u8>> {
     let kmer_neighborhood = KmerNeighborhood::new(kmer, d);
     let mut res = HashSet::new();
     for kmer in kmer_neighborhood {
         res.insert(kmer);
     }
+    //println!("{:?}", res);
     res
 }
 
@@ -86,7 +93,7 @@ pub fn num_mismatches(left: &[u8], right: &[u8]) -> usize {
 ///
 /// let text = "ACGTTGCATGTCGCATGATGCATGAGAGCT";
 /// let counts = count_mismatch_kmers(text, 4, 1);
-/// assert_eq!(counts[&b"GATG"[..]], 4);
+/// assert_eq!(counts[&b"GATG"[..]], 5);
 /// ```
 pub fn count_mismatch_kmers(text: &str, k: usize, d:usize) -> HashMap<Vec<u8>, i32> {
     let mut kmer_counts = HashMap::new();
@@ -123,12 +130,17 @@ pub fn find_frequent_kmers(kmer_counts: &HashMap<Vec<u8>, i32>) ->  Vec<String> 
     let mut res: Vec<String> = Vec::new();
     let mut highest_count: i32 = 0;
     for (kmer, count) in kmer_counts {
+        //println!("{} {}", count, String::from_utf8(kmer.clone()).unwrap());
         if *count > highest_count {
+            //println!("Found new highest {} {}", count, String::from_utf8(kmer.clone()).unwrap());
+
             highest_count = count.clone();
             res.clear();
             let s = String::from_utf8(kmer.clone()).unwrap();
             res.push(s);
         } else if *count == highest_count {
+            //println!("Found matching highest {} {}", count, String::from_utf8(kmer.clone()).unwrap());
+
             let s = String::from_utf8(kmer.clone()).unwrap();
             res.push(s);
         }

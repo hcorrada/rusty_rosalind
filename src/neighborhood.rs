@@ -109,6 +109,7 @@ pub struct KmerNeighborhood<'a> {
     chars: &'a [u8],
     n: usize,
     buffer: Vec<u8>,
+    nucs: &'a [u8; 4],
     index_iterator: itertools::Product<Combinations, Product>,
 }
 
@@ -119,13 +120,14 @@ impl<'a> KmerNeighborhood<'a> {
         let mut buffer = Vec::with_capacity(n);
         for i in 0..n { buffer.push(chars[i]); }
         let combinations = Combinations::new(n, d);
-        let product = Product::new(n, d);
+        let product = Product::new(4, d);
         let index_iterator = combinations.cartesian_product(product);
 
         KmerNeighborhood {
             chars: chars,
             n: n,
             buffer: buffer,
+            nucs: b"ACGT",
             index_iterator: index_iterator,
         }
     }
@@ -134,7 +136,7 @@ impl<'a> KmerNeighborhood<'a> {
         for i in 0..self.n { self.buffer[i] = self.chars[i] };
 
         for (i,j) in ivec.iter().zip(jvec) {
-            self.buffer[*i] = self.chars[*j];
+            self.buffer[*i] = self.nucs[*j];
         }
         self.buffer.clone()
     }

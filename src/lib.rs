@@ -15,7 +15,7 @@ use neighborhood::KmerNeighborhood;
 /// # Examples
 ///
 /// ```
-/// use approximate_matching::combinations;
+/// use frequent_words_mismatch::combinations;
 ///
 /// let combs: Vec<_> = combinations(3, 2).collect();
 /// assert_eq!(combs, vec![[0,1], [0,2], [1,2]]);
@@ -28,7 +28,7 @@ pub fn combinations(n: usize, d: usize) -> Combinations {
 /// # Examples
 ///
 /// ```
-/// use approximate_matching::product;
+/// use frequent_words_mismatch::product;
 ///
 /// let prod: Vec<_> = product(3,2).collect();
 /// assert_eq!(prod, vec![[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]]);
@@ -41,8 +41,8 @@ pub fn product(n: usize, d: usize) -> Product {
 /// # Examples
 ///
 /// ```
-/// use approximate_matching::neighborhood;
-/// use approximate_matching::num_mismatches;
+/// use frequent_words_mismatch::neighborhood;
+/// use frequent_words_mismatch::num_mismatches;
 ///
 /// let res = neighborhood("ATCGA", 2);
 /// assert!(res.iter().all(|x| num_mismatches(b"ATCGA", x) <= 2));
@@ -65,7 +65,7 @@ pub fn neighborhood(kmer: &str, d: usize) -> HashSet<Vec<u8>> {
 /// # Examples
 ///
 /// ```
-/// use approximate_matching::num_mismatches;
+/// use frequent_words_mismatch::num_mismatches;
 ///
 /// assert_eq!(num_mismatches(b"AAA",b"AAA"),0);
 /// assert_eq!(num_mismatches(b"AAA",b"ACA"),1);
@@ -78,7 +78,7 @@ pub fn num_mismatches(left: &[u8], right: &[u8]) -> usize {
 
 /// find approximate matches
 ///
-/// use approximate_matching::find_matches;
+/// use frequent_words_mismatch::find_matches;
 ///
 /// let pattern = "ATTCTGGA";
 /// let text = "CGCCCGAATCCAGAACGCATTCCCATATTTCGGGACCACTGGCCTCCACGGTACGGACGTCAATCAAATGCCTAGCGGCTTGTGGTTTCTCCTACGCTCC";
@@ -105,42 +105,26 @@ pub fn find_matches(pattern: &str, text: &str, d: usize) -> Vec<usize> {
 /// # Examples
 ///
 /// ```
-/// use approximate_matching::read_input;
+/// use frequent_words_mismatch::read_input;
 ///
 /// let res = read_input("test.txt");
-/// assert_eq!(res.0, "ATTCTGGA".to_string());
-/// assert_eq!(res.1, "CGCCCGAATCCAGAACGCATTCCCATATTTCGGGACCACTGGCCTCCACGGTACGGACGTCAATCAAATGCCTAGCGGCTTGTGGTTTCTCCTACGCTCC".to_string());
-/// assert_eq!(res.2, 3);
+/// assert_eq!(res.0, "ACGTTGCATGTCGCATGATGCATGAGAGCT".to_string());
+/// assert_eq!(res.1, 4);
+/// assert_eq!(res.2, 1);
 /// ```
-pub fn read_input(filename: &str) -> (String, String, usize) {
+pub fn read_input(filename: &str) -> (String, usize, usize) {
     let fhandle = File::open(filename)
         .ok()
         .expect("Couldn't open file");
 
     let mut lines = BufReader::new(fhandle).lines();
 
-    let pattern = if let Some(Ok(x)) = lines.next() {
-        x
-    } else {
-        panic!("Could not read pattern");
-    };
-
-    let text = if let Some(Ok(x)) = lines.next() {
-        x
-    } else {
-        panic!("Could not read text");
-    };
-
-    let dstr = if let Some(Ok(x)) = lines.next() {
-        x
-    } else {
-        panic!("Could not read d");
-    };
-
-    let d = if let Ok(x) = dstr.parse() { x
-    } else {
-        panic!("Could not parse d");
-    };
-
-    (pattern, text, d)
+    let text = if let Some(Ok(x)) = lines.next() { x } else { panic!("Could not read text"); };
+    let kdstr = if let Some(Ok(x)) = lines.next() { x } else { panic!("Could not read d"); };
+    let mut iter = kdstr.split_whitespace();
+    let kstr = if let Some(x) = iter.next() { x } else { panic!("Could not read k"); };
+    let k = if let Ok(x) = kstr.parse() { x } else { panic!("Couldn't parse k"); };
+    let dstr = if let Some(x) = iter.next() { x } else { panic!("Could not read d"); };
+    let d = if let Ok(x) = dstr.parse() { x } else { panic!("Could not parse d"); };
+    (text, k, d)
 }

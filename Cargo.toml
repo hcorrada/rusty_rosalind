@@ -1,5 +1,5 @@
 [package]
-name = "approximate_matching"
+name = "frequent_words_mismatch"
 version = "0.1.0"
 authors = ["Hector Corrada Bravo <hcorrada@gmail.com>"]
 

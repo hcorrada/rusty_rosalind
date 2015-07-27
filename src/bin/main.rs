@@ -1,18 +1,18 @@
 extern crate itertools;
-extern crate approximate_matching;
+extern crate frequent_words_mismatch;
 
 use std::env;
 
 use itertools::Itertools;
-use approximate_matching::read_input;
-use approximate_matching::find_matches;
+use frequent_words_mismatch::read_input;
+use frequent_words_mismatch::find_matches;
 
 fn main() {
     let filename = env::args().nth(1)
         .expect("Need input filename as argument");
 
-    let (pattern, text, d) = read_input(&filename);
-    let res = find_matches(&pattern, &text, d);
+    let (text, k, d) = read_input(&filename);
+    let res = find_matches(&text, &text, d);
     let out = res.iter().join(" ");
     println!("{}", out);
 }

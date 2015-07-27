@@ -3,6 +3,7 @@ use std::io::BufReader;
 use std::io::BufRead;
 
 use std::collections::HashSet;
+use std::collections::HashMap;
 
 mod neighborhood;
 
@@ -76,6 +77,32 @@ pub fn num_mismatches(left: &[u8], right: &[u8]) -> usize {
         .count()
 }
 
+/// count kmers with mismatches
+///
+/// # Examples
+///
+/// ```
+/// use frequent_words_mismatch::count_mismatch_kmers;
+///
+/// let text = "ACGTTGCATGTCGCATGATGCATGAGAGCT";
+/// let counts = count_mismatch_kmers(text, 4, 1);
+/// assert_eq!(counts[&b"GATG"[..]], 4);
+/// ```
+pub fn count_mismatch_kmers(text: &str, k: usize, d:usize) -> HashMap<Vec<u8>, i32> {
+    let mut kmer_counts = HashMap::new();
+
+    let n = text.len();
+    for start in 0..n-k+1 {
+        let kmer = &text[start..start+k];
+        let kmer_neighborhood = neighborhood(kmer, d);
+        for approximate_kmer in kmer_neighborhood.iter() {
+            let counter = kmer_counts.entry(approximate_kmer.clone()).or_insert(0 as i32);
+            *counter += 1;
+        }
+    }
+    kmer_counts
+}
+
 /// find approximate matches
 ///
 /// use frequent_words_mismatch::find_matches;
@@ -91,7 +118,7 @@ pub fn find_matches(pattern: &str, text: &str, d: usize) -> Vec<usize> {
     let n = text.len();
     let mut result = Vec::new();
 
-    for i in 0..n-k {
+    for i in 0..n-k+1 {
         let kmer = &text[i..i+k];
         if neighborhood.contains(kmer) {
             result.push(i);

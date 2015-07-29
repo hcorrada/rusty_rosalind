@@ -33,7 +33,7 @@ impl Iterator for Product {
         }
 
         let mut cur_position = self.d - 1;
-        while cur_position >= 0 {
+        loop {
             if self.vals[cur_position] < self.n - 1 {
                 self.vals[cur_position] += 1;
                 break;
@@ -84,7 +84,7 @@ impl Iterator for Combinations {
 
         // check if we can advance index from last to first position
         let mut cur_position = self.d - 1;
-        while cur_position >= 0 {
+        loop {
             if self.vals[cur_position] + (self.d - cur_position) < self. n {
                 // advance index in this column and break loop
                 self.vals[cur_position] += 1;
@@ -122,8 +122,8 @@ impl<'a> KmerNeighborhood<'a> {
         let n = chars.len();
         let mut buffer = Vec::with_capacity(n);
         for i in 0..n { buffer.push(chars[i]); }
-        let combinations = Combinations::new(n, d);
-        let product = Product::new(4, d);
+        let combinations = combinations(n, d);
+        let product = product(4, d);
         let index_iterator = combinations.cartesian_product(product);
 
         KmerNeighborhood {

@@ -233,6 +233,21 @@ pub fn find_matches(pattern: &str, text: &str, d: usize) -> Vec<usize> {
     result
 }
 
+/// kmer composition
+///
+pub fn kmer_composition(text: &str, k: usize) -> Vec<Vec<u8>> {
+    let n = text.len();
+    let text = text.as_bytes();
+    let mut kmers = Vec::new();
+
+    for i in 0..n-k+1 {
+        let kmer = text[i..i+k].to_vec();
+        kmers.push(kmer);
+    }
+    kmers.sort();
+    kmers
+}
+
 #[cfg(test)]
 mod test {
     use std::collections::HashMap;
@@ -288,5 +303,16 @@ mod test {
         let text = "CGCCCGAATCCAGAACGCATTCCCATATTTCGGGACCACTGGCCTCCACGGTACGGACGTCAATCAAATGCCTAGCGGCTTGTGGTTTCTCCTACGCTCC";
         let result = super::find_matches(pattern, text, 3);
         assert_eq!(result, vec![6, 7, 26, 27, 78]);
+    }
+
+    #[test]
+    fn kmer_composition() {
+        let text = "CAATCCAAC";
+        let kmers = super::kmer_composition(text, 5);
+        assert_eq!(kmers, vec![b"AATCC",
+                               b"ATCCA",
+                               b"CAATC",
+                               b"CCAAC",
+                               b"TCCAA"]);
     }
 }

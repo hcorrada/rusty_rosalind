@@ -179,19 +179,32 @@ fn neighborhood(kmer: &str, d: usize) -> HashSet<Vec<u8>> {
     res
 }
 
+use std::thread;
+use std::sync::{Arc, Mutex};
+
+
 /// count kmers
 ///
-pub fn count_kmers(dna: &str, k: usize) -> HashMap<Vec<u8>, i32> {
-    let mut kmer_counts = HashMap::new();
+pub fn count_kmers<'a>(dna: &'a str, k: usize) -> HashMap<Vec<u8>, i32> {
+    let kmer_counts: Arc<Mutex<HashMap<Vec<u8>, i32>>> = Arc::new(Mutex::new(HashMap::new()));
+    let dna = dna.to_string();
 
     let n = dna.len();
-    for start in 0..n-k+1 {
-        let kmer = &dna[start..start+k];
-        let counter = kmer_counts.entry(kmer.bytes().collect()).or_insert(0 as i32);
-        *counter += 1;
-    }
+    for start in (0..n-k+1) {
+        let dna = dna.clone();
+        let kmer_counts = kmer_counts.clone();
 
-    kmer_counts
+        thread::spawn(move || {
+            let kmer = &dna[start..start+k];
+            let mut kmer_counts = kmer_counts.lock().unwrap();
+            let counter = kmer_counts.entry(kmer.bytes().collect()).or_insert(0 as i32);
+            *counter += 1;
+        });
+
+        thread::sleep_ms(100);
+    }
+    let ref kmer_counts = *kmer_counts.lock().unwrap();
+    kmer_counts.clone()
 }
 
 /// count kmers with mismatches

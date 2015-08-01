@@ -1,9 +1,15 @@
-extern crate frequent_words;
+extern crate rosalind_lib;
 extern crate itertools;
 
-use frequent_words::*;
+use rosalind_lib::kmers::count_kmers;
+use rosalind_lib::kmers::find_frequent_kmers;
+
 use std::env;
 use itertools::Itertools;
+
+use std::fs::File;
+use std::io::BufReader;
+use std::io::BufRead;
 
 /// read problem input
 ///

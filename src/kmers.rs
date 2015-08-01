@@ -190,7 +190,7 @@ pub fn count_kmers<'a>(dna: &'a str, k: usize) -> HashMap<Vec<u8>, i32> {
     let dna = dna.to_string();
 
     let n = dna.len();
-    for start in (0..n-k+1) {
+    let handles: Vec<_> = (0..n-k+1).map(|start| {
         let dna = dna.clone();
         let kmer_counts = kmer_counts.clone();
 
@@ -199,10 +199,10 @@ pub fn count_kmers<'a>(dna: &'a str, k: usize) -> HashMap<Vec<u8>, i32> {
             let mut kmer_counts = kmer_counts.lock().unwrap();
             let counter = kmer_counts.entry(kmer.bytes().collect()).or_insert(0 as i32);
             *counter += 1;
-        });
+        })
+    }).collect();
 
-        thread::sleep_ms(100);
-    }
+    for h in handles { h.join().unwrap(); }
     let ref kmer_counts = *kmer_counts.lock().unwrap();
     kmer_counts.clone()
 }

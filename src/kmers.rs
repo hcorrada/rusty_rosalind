@@ -179,6 +179,21 @@ fn neighborhood(kmer: &str, d: usize) -> HashSet<Vec<u8>> {
     res
 }
 
+/// count kmers
+///
+pub fn count_kmers(dna: &str, k: usize) -> HashMap<String, i32> {
+    let mut kmer_counts = HashMap::new();
+
+    let n = dna.len();
+    for start in 0..n-k+1 {
+        let kmer = &dna[start..start+k];
+        let counter = kmer_counts.entry(kmer.to_string()).or_insert(0 as i32);
+        *counter += 1;
+    }
+
+    kmer_counts
+}
+
 /// count kmers with mismatches
 ///
 pub fn count_mismatch_kmers(text: &str, k: usize, d:usize) -> HashMap<Vec<u8>, i32> {
@@ -253,6 +268,12 @@ mod test {
     use std::collections::HashMap;
     use dna_utils::num_mismatches;
 
+    #[test]
+    fn count_kmers() {
+        let dna = "ACAACTATGCATACTATCGGGAACTATCCT";
+        let kmer_counts = super::count_kmers(dna, 5);
+        assert_eq!(kmer_counts["ACTAT"], 3);
+    }
 
     #[test]
     fn combinations() {

@@ -181,13 +181,13 @@ fn neighborhood(kmer: &str, d: usize) -> HashSet<Vec<u8>> {
 
 /// count kmers
 ///
-pub fn count_kmers(dna: &str, k: usize) -> HashMap<String, i32> {
+pub fn count_kmers(dna: &str, k: usize) -> HashMap<Vec<u8>, i32> {
     let mut kmer_counts = HashMap::new();
 
     let n = dna.len();
     for start in 0..n-k+1 {
         let kmer = &dna[start..start+k];
-        let counter = kmer_counts.entry(kmer.to_string()).or_insert(0 as i32);
+        let counter = kmer_counts.entry(kmer.bytes().collect()).or_insert(0 as i32);
         *counter += 1;
     }
 
@@ -271,8 +271,9 @@ mod test {
     #[test]
     fn count_kmers() {
         let dna = "ACAACTATGCATACTATCGGGAACTATCCT";
-        let kmer_counts = super::count_kmers(dna, 5);
-        assert_eq!(kmer_counts["ACTAT"], 3);
+        let kmer_counts: HashMap<Vec<u8>, i32> = super::count_kmers(&dna, 5);
+        let count = kmer_counts[&b"ACTAT"[..]];
+        assert_eq!(count, 3);
     }
 
     #[test]

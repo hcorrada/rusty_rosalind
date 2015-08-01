@@ -11,17 +11,7 @@ use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
 
-/// read problem input
-///
-/// # Examples
-///
-/// ```
-/// use frequent_words::read_input;
-///
-/// let (dna, k) = read_input("test.txt");
-/// assert_eq!(dna, "ACGTTGCATGTCGCATGATGCATGAGAGCT");
-/// assert_eq!(k, 4);
-/// ```
+
 pub fn read_input(filename: &str) -> (String, usize) {
     let fhandle = File::open(filename)
         .ok()
@@ -42,4 +32,14 @@ fn main() {
     let frequent_kmers: Vec<String> = find_frequent_kmers(&kmer_counts);
     let res = frequent_kmers.iter().join(" ");
     println!("{}", res);
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn read_input() {
+        let (dna, k) = super::read_input("test.txt");
+        assert_eq!(dna, "ACGTTGCATGTCGCATGATGCATGAGAGCT");
+        assert_eq!(k, 4);
+    }
 }

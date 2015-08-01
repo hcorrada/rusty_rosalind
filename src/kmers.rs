@@ -183,10 +183,30 @@ use std::thread;
 use std::sync::{Arc, Mutex};
 
 
+pub struct KmerCounter {
+    hash: HashMap<Vec<u8>, i32>,
+}
+
+impl KmerCounter {
+    fn new() -> Self {
+        KmerCounter { hash: HashMap::new() }
+    }
+
+    fn count(&mut self, kmer: &str) {
+        let kmer = kmer.bytes().collect();
+        let counter = self.hash.entry(kmer).or_insert(0i32);
+        *counter += 1;
+    }
+
+    fn to_hash(&self) -> &HashMap<Vec<u8>, i32> {
+        &self.hash
+    }
+}
+
 /// count kmers
 ///
 pub fn count_kmers<'a>(dna: &'a str, k: usize) -> HashMap<Vec<u8>, i32> {
-    let kmer_counts: Arc<Mutex<HashMap<Vec<u8>, i32>>> = Arc::new(Mutex::new(HashMap::new()));
+    let kmer_counts: Arc<Mutex<KmerCounter>> = Arc::new(Mutex::new(KmerCounter::new()));
     let dna = dna.to_string();
 
     let n = dna.len();
@@ -197,14 +217,13 @@ pub fn count_kmers<'a>(dna: &'a str, k: usize) -> HashMap<Vec<u8>, i32> {
         thread::spawn(move || {
             let kmer = &dna[start..start+k];
             let mut kmer_counts = kmer_counts.lock().unwrap();
-            let counter = kmer_counts.entry(kmer.bytes().collect()).or_insert(0 as i32);
-            *counter += 1;
+            kmer_counts.count(kmer);
         })
     }).collect();
 
     for h in handles { h.join().unwrap(); }
     let ref kmer_counts = *kmer_counts.lock().unwrap();
-    kmer_counts.clone()
+    kmer_counts.to_hash().clone()
 }
 
 /// count kmers with mismatches

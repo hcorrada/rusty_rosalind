@@ -42,18 +42,13 @@ pub fn parse_fasta_file(filename: &str) -> HashMap<String, String> {
     let fhandle = File::open(filename)
         .ok()
         .expect("Could not open file");
-    let reader = BufReader::new(fhandle);
+    let mut lines = BufReader::new(fhandle).lines();
     let mut records = HashMap::new();
 
     let mut id = String::new();
     let mut dna = String::new();
 
-    for line in reader.lines() {
-        if line.is_err() {
-            break;
-        };
-
-        let curline = line.unwrap();
+    while let Some(Ok(curline)) = lines.next() {
         if curline.starts_with(">") {
             if id.len() > 0 { records.insert(id, dna); };
             id = curline[1..].to_string();

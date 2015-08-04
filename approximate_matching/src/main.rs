@@ -11,16 +11,6 @@ use rosalind_lib::kmers::find_matches;
 
 /// read input
 ///
-/// # Examples
-///
-/// ```
-/// use approximate_matching::read_input;
-///
-/// let res = read_input("test.txt");
-/// assert_eq!(res.0, "ATTCTGGA".to_string());
-/// assert_eq!(res.1, "CGCCCGAATCCAGAACGCATTCCCATATTTCGGGACCACTGGCCTCCACGGTACGGACGTCAATCAAATGCCTAGCGGCTTGTGGTTTCTCCTACGCTCC".to_string());
-/// assert_eq!(res.2, 3);
-/// ```
 pub fn read_input(filename: &str) -> (String, String, usize) {
     let fhandle = File::open(filename)
         .ok()
@@ -62,4 +52,15 @@ fn main() {
     let res = find_matches(&pattern, &text, d);
     let out = res.iter().join(" ");
     println!("{}", out);
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn read_input() {
+        let res = super::read_input("test.txt");
+        assert_eq!(res.0, "ATTCTGGA".to_string());
+        assert_eq!(res.1, "CGCCCGAATCCAGAACGCATTCCCATATTTCGGGACCACTGGCCTCCACGGTACGGACGTCAATCAAATGCCTAGCGGCTTGTGGTTTCTCCTACGCTCC".to_string());
+        assert_eq!(res.2, 3);
+    }
 }

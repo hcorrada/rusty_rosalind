@@ -184,22 +184,46 @@ use std::sync::{Arc, Mutex};
 
 
 pub struct KmerCounter {
-    hash: HashMap<Vec<u8>, i32>,
+    map: HashMap<Vec<u8>, i32>,
 }
 
 impl KmerCounter {
     fn new() -> Self {
-        KmerCounter { hash: HashMap::new() }
+        KmerCounter { map: HashMap::new() }
     }
 
     fn count(&mut self, kmer: &str) {
         let kmer = kmer.bytes().collect();
-        let counter = self.hash.entry(kmer).or_insert(0i32);
+        let counter = self.map.entry(kmer).or_insert(0i32);
         *counter += 1;
     }
 
-    fn to_hash(&self) -> &HashMap<Vec<u8>, i32> {
-        &self.hash
+    fn insert(&mut self, kmer: &str, val: i32) {
+        self.map.insert(kmer.bytes().collect(), val);
+    }
+
+    fn to_hashmap(&self) -> &HashMap<Vec<u8>, i32> {
+        &self.map
+    }
+
+    /// get frequent kmers
+    ///
+    pub fn find_frequent_kmers(&self) ->  Vec<String> {
+        let mut res: Vec<String> = Vec::new();
+        let mut highest_count: i32 = 0;
+
+        for (kmer, count) in &self.map {
+            if *count > highest_count {
+                highest_count = count.clone();
+                res.clear();
+                let s = String::from_utf8(kmer.clone()).unwrap();
+                res.push(s);
+            } else if *count == highest_count {
+                let s = String::from_utf8(kmer.clone()).unwrap();
+                res.push(s);
+            }
+        }
+        res
     }
 }
 
@@ -223,7 +247,7 @@ pub fn count_kmers<'a>(dna: &'a str, k: usize) -> HashMap<Vec<u8>, i32> {
 
     for h in handles { h.join().unwrap(); }
     let ref kmer_counts = *kmer_counts.lock().unwrap();
-    kmer_counts.to_hash().clone()
+    kmer_counts.to_hashmap().clone()
 }
 
 /// count kmers with mismatches
@@ -241,25 +265,6 @@ pub fn count_mismatch_kmers(text: &str, k: usize, d:usize) -> HashMap<Vec<u8>, i
         }
     }
     kmer_counts
-}
-
-/// get frequent kmers
-///
-pub fn find_frequent_kmers(kmer_counts: &HashMap<Vec<u8>, i32>) ->  Vec<String> {
-    let mut res: Vec<String> = Vec::new();
-    let mut highest_count: i32 = 0;
-    for (kmer, count) in kmer_counts {
-        if *count > highest_count {
-            highest_count = count.clone();
-            res.clear();
-            let s = String::from_utf8(kmer.clone()).unwrap();
-            res.push(s);
-        } else if *count == highest_count {
-            let s = String::from_utf8(kmer.clone()).unwrap();
-            res.push(s);
-        }
-    }
-    res
 }
 
 /// find approximate matches
@@ -341,12 +346,12 @@ mod test {
 
     #[test]
     fn find_frequent_kmers() {
-        let mut kmer_counts = HashMap::new();
-        kmer_counts.insert(b"AB".to_vec(), 4);
-        kmer_counts.insert(b"AC".to_vec(), 2);
-        kmer_counts.insert(b"AD".to_vec(), 4);
-        kmer_counts.insert(b"AE".to_vec(), 1);
-        let mut frequent_kmers = super::find_frequent_kmers(&kmer_counts);
+        let mut kmer_counts = super::KmerCounter::new();
+        kmer_counts.insert("AB", 4);
+        kmer_counts.insert("AC", 2);
+        kmer_counts.insert("AD", 4);
+        kmer_counts.insert("AE", 1);
+        let mut frequent_kmers = kmer_counts.find_frequent_kmers();
         frequent_kmers.sort();
         assert_eq!(frequent_kmers, ["AB", "AD"]);
     }

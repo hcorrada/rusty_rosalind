@@ -2,7 +2,6 @@ extern crate rosalind_lib;
 extern crate itertools;
 
 use rosalind_lib::kmers::count_kmers;
-use rosalind_lib::kmers::find_frequent_kmers;
 
 use std::env;
 use itertools::Itertools;
@@ -29,7 +28,7 @@ fn main() {
 
     let (dna, k) = read_input(&filename);
     let kmer_counts = count_kmers(&dna, k);
-    let frequent_kmers: Vec<String> = find_frequent_kmers(&kmer_counts);
+    let frequent_kmers: Vec<String> = kmer_counts.find_frequent_kmers();
     let res = frequent_kmers.iter().join(" ");
     println!("{}", res);
 }

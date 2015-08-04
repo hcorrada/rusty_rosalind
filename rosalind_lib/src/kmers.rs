@@ -182,7 +182,7 @@ fn neighborhood(kmer: &str, d: usize) -> HashSet<Vec<u8>> {
 use std::thread;
 use std::sync::{Arc, Mutex};
 
-
+#[derive(Clone)]
 pub struct KmerCounter {
     map: HashMap<Vec<u8>, i32>,
 }
@@ -229,7 +229,7 @@ impl KmerCounter {
 
 /// count kmers
 ///
-pub fn count_kmers<'a>(dna: &'a str, k: usize) -> HashMap<Vec<u8>, i32> {
+pub fn count_kmers<'a>(dna: &'a str, k: usize) -> KmerCounter {
     let kmer_counts: Arc<Mutex<KmerCounter>> = Arc::new(Mutex::new(KmerCounter::new()));
     let dna = dna.to_string();
 
@@ -247,7 +247,7 @@ pub fn count_kmers<'a>(dna: &'a str, k: usize) -> HashMap<Vec<u8>, i32> {
 
     for h in handles { h.join().unwrap(); }
     let ref kmer_counts = *kmer_counts.lock().unwrap();
-    kmer_counts.to_hashmap().clone()
+    kmer_counts.clone()
 }
 
 /// count kmers with mismatches
@@ -308,8 +308,9 @@ mod test {
     #[test]
     fn count_kmers() {
         let dna = "ACAACTATGCATACTATCGGGAACTATCCT";
-        let kmer_counts: HashMap<Vec<u8>, i32> = super::count_kmers(&dna, 5);
-        let count = kmer_counts[&b"ACTAT"[..]];
+        let kmer_counts = super::count_kmers(&dna, 5);
+        let kmer_hash = kmer_counts.to_hashmap().clone();
+        let count = kmer_hash[&b"ACTAT"[..]];
         assert_eq!(count, 3);
     }
 

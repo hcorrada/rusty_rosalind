@@ -1,9 +1,11 @@
 extern crate rosalind_lib;
+extern crate itertools;
 
 use std::env;
 use std::fs::File;
 use std::io::Read;
 use itertools::Itertools;
+use rosalind_lib::dna_utils::count_nucleotides;
 
 /// Read input file
 ///
@@ -18,7 +20,7 @@ use itertools::Itertools;
 ///
 /// assert_eq!(res, string);
 /// ```
-pub fn read_input(filename: &str) -> String {
+fn read_input(filename: &str) -> String {
     // open file
     let mut fhandle = File::open(filename)
         .ok()
@@ -40,8 +42,8 @@ pub fn read_input(filename: &str) -> String {
 fn main() {
     let filename = env::args().nth(1)
         .expect("Need one argument");
-    let string = count_nucleotides::read_input(&filename);
-    let res = count_nucleotides::count_nucleotides(&string);
-    let res = count_nucleotides::make_output(&res);
+    let string = read_input(&filename);
+    let res = count_nucleotides(&string);
+    let res = res.iter().join(" ");
     println!("{}", &res);
 }

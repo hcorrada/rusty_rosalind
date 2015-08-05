@@ -5,3 +5,6 @@ authors = ["Hector Corrada Bravo <hcorrada@gmail.com>"]
 
 [dependencies]
 itertools = "0.3.0"
+
+[dependencies.rosalind_lib]
+path = "../rosalind_lib"

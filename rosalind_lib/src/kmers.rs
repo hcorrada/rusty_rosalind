@@ -194,7 +194,11 @@ impl KmerCounter {
 
     fn count(&mut self, kmer: &str) {
         let kmer = kmer.bytes().collect();
-        let counter = self.map.entry(kmer).or_insert(0i32);
+        self.count_u8(&kmer);
+    }
+
+    fn count_u8(&mut self, kmer: &Vec<u8>) {
+        let counter = self.map.entry(kmer.clone()).or_insert(0i32);
         *counter += 1;
     }
 
@@ -252,16 +256,15 @@ pub fn count_kmers<'a>(dna: &'a str, k: usize) -> KmerCounter {
 
 /// count kmers with mismatches
 ///
-pub fn count_mismatch_kmers(text: &str, k: usize, d:usize) -> HashMap<Vec<u8>, i32> {
-    let mut kmer_counts = HashMap::new();
+pub fn count_mismatch_kmers(text: &str, k: usize, d:usize) -> KmerCounter {
+    let mut kmer_counts = KmerCounter::new();
 
     let n = text.len();
     for start in 0..n-k+1 {
         let kmer = &text[start..start+k];
         let kmer_neighborhood = neighborhood(kmer, d);
         for approximate_kmer in kmer_neighborhood.iter() {
-            let counter = kmer_counts.entry(approximate_kmer.clone()).or_insert(0 as i32);
-            *counter += 1;
+            kmer_counts.count_u8(approximate_kmer);
         }
     }
     kmer_counts
@@ -400,7 +403,7 @@ mod test {
     #[test]
     fn count_mismatch_kmers() {
         let text = "ACGTTGCATGTCGCATGATGCATGAGAGCT";
-        let counts = super::count_mismatch_kmers(text, 4, 1);
+        let counts = super::count_mismatch_kmers(text, 4, 1).to_hashmap().clone();
         assert_eq!(counts[&b"GATG"[..]], 5);
     }
 

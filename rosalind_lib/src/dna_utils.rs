@@ -54,6 +54,18 @@ pub fn count_nucleotides(string: &str) -> Vec<i32> {
     map.values().cloned().collect()
 }
 
+pub fn gc_content(dna: &str) -> f32 {
+    let mut count = 0.0;
+    for c in dna.chars() {
+        count += match c {
+            'C' | 'G' => 1.0,
+            'A' | 'T' => 0.0,
+            _ => unreachable!(),
+        }
+    }
+    100.0 * count / dna.len() as f32
+}
+
 #[cfg(test)]
 mod test {
     #[test]
@@ -89,5 +101,11 @@ mod test {
         let string = "AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC";
         let res = super::count_nucleotides(string);
         assert_eq!(res, vec![20, 12, 17, 21])
+    }
+
+    #[test]
+    fn gc_content() {
+        let dna = "AGCTATAG";
+        assert_eq!(super::gc_content(dna), 37.5);
     }
 }

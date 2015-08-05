@@ -66,6 +66,12 @@ pub fn gc_content(dna: &str) -> f32 {
     100.0 * count / dna.len() as f32
 }
 
+/// Transcribe DNA to RNA
+///
+pub fn transcribe(dna: &str) -> String {
+    dna.replace("T", "U")
+}
+
 #[cfg(test)]
 mod test {
     #[test]
@@ -107,5 +113,12 @@ mod test {
     fn gc_content() {
         let dna = "AGCTATAG";
         assert_eq!(super::gc_content(dna), 37.5);
+    }
+
+    #[test]
+    fn transcribe() {
+        let dna = "GATGGAACTTGACTACGTAAATT";
+        let res = super::transcribe(dna);
+        assert_eq!(res, "GAUGGAACUUGACUACGUAAAUU")
     }
 }

@@ -267,6 +267,41 @@ pub fn count_mismatch_kmers(text: &str, k: usize, d:usize) -> HashMap<Vec<u8>, i
     kmer_counts
 }
 
+/// kmer locator
+pub struct KmerLocator {
+    map: HashMap<Vec<u8>, Vec<usize>>,
+}
+
+impl KmerLocator {
+    pub fn new() -> Self {
+        KmerLocator { map: HashMap::new() }
+    }
+
+    pub fn insert(&mut self, kmer: &str, location: usize) {
+        let kmer = kmer.bytes().collect();
+        let locations = self.map.entry(kmer).or_insert(Vec::new());
+        locations.push(location)
+    }
+
+    pub fn to_hashmap(&self) -> &HashMap<Vec<u8>, Vec<usize>> {
+        &self.map
+    }
+
+}
+
+/// locate kmer locator
+///
+pub fn locate_kmers(genome: &str, k: usize) -> KmerLocator {
+    let mut kmer_locations = KmerLocator::new();
+    let n = genome.len();
+
+    for location in 0..n-k+1 {
+        let kmer = &genome[location..location+k];
+        kmer_locations.insert(kmer, location)
+    }
+    kmer_locations
+}
+
 /// find approximate matches
 ///
 pub fn find_matches(pattern: &str, text: &str, d: usize) -> Vec<usize> {
@@ -374,5 +409,14 @@ mod test {
                                b"CAATC",
                                b"CCAAC",
                                b"TCCAA"]);
+    }
+
+    #[test]
+    fn locate_kmers() {
+        let genome = "CGACACGACATTGCGACATA";
+        let res = super::locate_kmers(genome, 5).to_hashmap().clone();
+        assert!(res.contains_key(&b"CGACA"[..]));
+        let locations = res.get(&b"CGACA"[..]).unwrap();
+        assert_eq!(*locations, vec![0, 5, 13]);
     }
 }

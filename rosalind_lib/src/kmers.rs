@@ -203,10 +203,16 @@ impl KmerCounter {
     }
 
     fn insert(&mut self, kmer: &str, val: i32) {
-        self.map.insert(kmer.bytes().collect(), val);
+        let kmer = kmer.bytes().collect();
+        self.insert_u8(&kmer, val);
     }
 
-    fn to_hashmap(&self) -> &HashMap<Vec<u8>, i32> {
+    pub fn insert_u8(&mut self, kmer: &Vec<u8>, val: i32) {
+        let counter = self.map.entry(kmer.clone()).or_insert(0i32);
+        *counter += val;
+    }
+
+    pub fn to_hashmap(&self) -> &HashMap<Vec<u8>, i32> {
         &self.map
     }
 

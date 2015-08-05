@@ -283,10 +283,35 @@ impl KmerLocator {
         locations.push(location)
     }
 
+    pub fn insert_locations(&mut self, kmer: &str, locations: Vec<usize>) {
+        let kmer = kmer.bytes().collect();
+        let kmer_locations = self.map.entry(kmer).or_insert(Vec::new());
+
+        for location in &locations {
+            kmer_locations.push(*location);
+        }
+    }
+
     pub fn to_hashmap(&self) -> &HashMap<Vec<u8>, Vec<usize>> {
         &self.map
     }
 
+    pub fn find_clumps(&self, l: usize, t: usize, k:usize) -> Vec<String> {
+        let mut clumps = Vec::new();
+
+        for (kmer, locations) in &self.map {
+            let n = locations.len();
+            if n < t { continue; };
+            for i in 0..n-t+1 {
+                if locations[i] + l - k >= locations[i+t-1] {
+                    let s = String::from_utf8(kmer.clone()).unwrap();
+                    clumps.push(s);
+                    break;
+                }
+            }
+        }
+        clumps
+    }
 }
 
 /// locate kmer locator
@@ -418,5 +443,27 @@ mod test {
         assert!(res.contains_key(&b"CGACA"[..]));
         let locations = res.get(&b"CGACA"[..]).unwrap();
         assert_eq!(*locations, vec![0, 5, 13]);
+    }
+
+
+    #[test]
+    fn find_clumps() {
+        let mut kmer_locations = super::KmerLocator::new();
+        kmer_locations.insert_locations("A", vec![1,3,5,7]);
+        kmer_locations.insert_locations("B", vec![1,2,3,4]);
+        kmer_locations.insert_locations("C", vec![1,10,20,30]);
+
+        let res = kmer_locations.find_clumps(3, 3, 1);
+        assert_eq!(res, vec!["B".to_string()]);
+    }
+
+    #[test]
+    fn find_clumps2() {
+        let genome = "CGGACTCGACAGATGTGAAGAAATGTGAAGACTGAGTGAAGAGAAGAGGAAACACGACACGACATTGCGACATAATGTACGAATGTAATGTGCCTATGGC";
+        let (k, l, t) = (5, 75, 4);
+        let kmer_locations = super::locate_kmers(genome, k);
+        let mut clumps = kmer_locations.find_clumps(l, t, k);
+        let mut expected = vec!["CGACA", "GAAGA", "AATGT"];
+        assert_eq!(clumps.sort(), expected.sort());
     }
 }

@@ -1,7 +1,7 @@
 extern crate rosalind_lib;
 
 use std::env;
-use rosalind_lib::io::parse_fast_file;
+use rosalind_lib::io::parse_fasta_file;
 use rosalind_lib::dna_utils::gc_content;
 
 pub fn main() {

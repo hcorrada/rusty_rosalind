@@ -9,17 +9,6 @@ use rosalind_lib::dna_utils::count_nucleotides;
 
 /// Read input file
 ///
-/// # Examples
-///
-/// ```
-/// use count_nucleotides::read_input;
-///
-/// let filename = "test.txt";
-/// let string = "AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC";
-/// let res = read_input(filename);
-///
-/// assert_eq!(res, string);
-/// ```
 fn read_input(filename: &str) -> String {
     // open file
     let mut fhandle = File::open(filename)
@@ -46,4 +35,16 @@ fn main() {
     let res = count_nucleotides(&string);
     let res = res.iter().join(" ");
     println!("{}", &res);
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn read_input() {
+        let filename = "test.txt";
+        let string = "AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC";
+        let res = super::read_input(filename);
+
+        assert_eq!(res, string);
+    }
 }

@@ -362,7 +362,6 @@ pub fn kmer_composition(text: &str, k: usize) -> Vec<Vec<u8>> {
 
 #[cfg(test)]
 mod test {
-    use std::collections::HashMap;
     use dna_utils::num_mismatches;
 
     #[test]

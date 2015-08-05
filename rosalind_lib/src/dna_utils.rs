@@ -35,6 +35,25 @@ pub fn num_mismatches(left: &[u8], right: &[u8]) -> usize {
         .count()
 }
 
+use std::collections::BTreeMap;
+
+/// count nucleotides in a string
+///
+pub fn count_nucleotides(string: &str) -> Vec<i32> {
+    // use a BTreeMap to order the keys of the hash so that
+    // keys are ordered (ACGT)
+    let mut map = BTreeMap::new();
+
+    // add 1 to counter hash entry for each character
+    // in string
+    for c in string.chars() {
+        *map.entry(c).or_insert(0) += 1;
+    }
+
+    // return vector of nucleotide counts
+    map.values().cloned().collect()
+}
+
 #[cfg(test)]
 mod test {
     #[test]
@@ -63,5 +82,12 @@ mod test {
         assert_eq!(super::num_mismatches(b"AAA",b"AAA"),0);
         assert_eq!(super::num_mismatches(b"AAA",b"ACA"),1);
         assert_eq!(super::num_mismatches(b"TAT",b"AAA"),2);
+    }
+
+    #[test]
+    fn count_nucleotides() {
+        let string = "AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC";
+        let res = super::count_nucleotides(string);
+        assert_eq!(res, vec![20, 12, 17, 21])
     }
 }

@@ -1,41 +1,14 @@
+extern crate itertools;
+extern crate rosalind_lib;
+
+use itertools::Itertools;
+use std::env;
 use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
 
-/// do pattern matching
-///
-/// # Examples
-///
-/// ```
-/// use pattern_matching::match_pattern;
-///
-/// let pattern = "ATAT";
-/// let genome = "GATATATGCATATACTT";
-/// let res = match_pattern(pattern, genome);
-/// assert_eq!(res, vec![1, 3, 9]);
-/// ```
-pub fn match_pattern(pattern: &str, genome: &str) -> Vec<usize> {
-    let k = pattern.len();
-    let n = genome.len();
-    let mut res = Vec::new();
+use rosalind_lib::matching::naive;
 
-    for i in 0..n-k {
-        if pattern == &genome[i..i+k] { res.push(i); }
-    }
-    res
-}
-
-/// read input from file
-///
-/// # Examples
-///
-/// ```
-/// use pattern_matching::read_input;
-///
-/// let (pattern, genome) = read_input("test.txt");
-/// assert_eq!(pattern, "ATAT".to_string());
-/// assert_eq!(genome, "GATATATGCATATACTT".to_string());
-/// ```
 pub fn read_input(filename: &str) -> (String, String) {
     // open file and get lines iterator
     let fhandle = File::open(filename)
@@ -62,4 +35,23 @@ pub fn read_input(filename: &str) -> (String, String) {
 
     // return input
     (pattern, genome)
+}
+
+fn main() {
+    let filename = env::args().nth(1)
+        .expect("Need filename as argument");
+    let (pattern, genome) = read_input(&filename);
+    let res = naive(&pattern, &genome);
+    let out = res.iter().join(" ");
+    println!("{}", out);
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn read_input() {
+        let (pattern, genome) = super::read_input("test.txt");
+        assert_eq!(pattern, "ATAT".to_string());
+        assert_eq!(genome, "GATATATGCATATACTT".to_string());
+    }
 }

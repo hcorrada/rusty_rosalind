@@ -1,31 +1,18 @@
-extern crate clump_finding;
+#[macro_use] extern crate scan_fmt;
+
+extern crate rosalind_lib;
 extern crate itertools;
 
 use std::env;
-use clump_finding::*;
 use itertools::Itertools;
-
-#[macro_use] extern crate scan_fmt;
 
 use std::fs::File;
 use std::io::BufReader;
 use std::io::BufRead;
-use std::collections::HashMap;
+
+use rosalind_lib::kmers::locate_kmers;
 
 
-
-/// read input
-///
-/// # Examples
-///
-/// ```
-/// use clump_finding::read_input;
-///
-/// let (genome, k, l, t) = read_input("test.txt");
-/// assert_eq!(genome, "CGGACTCGACAGATGTGAAGAAATGTGAAGACTGAGTGAAGAGAAGAGGAAACACGACACGACATTGCGACATAATGTACGAATGTAATGTGCCTATGGC".to_string());
-/// assert_eq!(k, 5);
-/// assert_eq!(l, 75);
-/// assert_eq!(t, 4);
 pub fn read_input(filename: &str) -> (String, usize, usize, usize){
     let fhandle = File::open(filename)
         .ok()
@@ -57,7 +44,19 @@ fn main() {
 
     let (genome, k, l, t) = read_input(&filename);
     let kmer_locations = locate_kmers(&genome, k);
-    let clumps = find_clumps(kmer_locations, l, t, k);
+    let clumps = kmer_locations.find_clumps(l, t, k);
     let res = clumps.iter().join(" ");
     println!("{}", res);
+}
+
+#[cfg(test)]
+mod test {
+    #[test]
+    fn read_input() {
+        let (genome, k, l, t) = super::read_input("test.txt");
+        assert_eq!(genome, "CGGACTCGACAGATGTGAAGAAATGTGAAGACTGAGTGAAGAGAAGAGGAAACACGACACGACATTGCGACATAATGTACGAATGTAATGTGCCTATGGC".to_string());
+        assert_eq!(k, 5);
+        assert_eq!(l, 75);
+        assert_eq!(t, 4);
+    }
 }
